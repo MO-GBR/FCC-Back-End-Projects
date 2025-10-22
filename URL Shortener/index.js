@@ -25,7 +25,7 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/api/', urlRouter);
+app.use('/', urlRouter);
 
 app.listen(port, function() {
   connectDB();
