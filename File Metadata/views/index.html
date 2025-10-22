@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>File Metadata Microservice</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
+      body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; display:flex; align-items:center; justify-content:center; min-height:100vh; margin:0; background:#f7fafc; color:#0f172a; }
+      .card { background:#fff; padding:2rem; border-radius:12px; box-shadow:0 6px 30px rgba(2,6,23,0.08); max-width:760px; width:100%; }
+      input,button{ padding:0.6rem; border-radius:8px; border:1px solid #e6edf3; font-size:1rem; }
+      button{ background:#0366d6; color:white; border:0; cursor:pointer; }
+      pre{ background:#f3f4f6; padding:1rem; border-radius:8px; overflow:auto; margin-top:1rem; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>File Metadata Microservice</h1>
+      <p>Choose a file and submit. The server will return the file <strong>name</strong>, <strong>type</strong>, and <strong>size</strong> in bytes.</p>
+
+      <form id="uploadForm" enctype="multipart/form-data" method="post" action="/api/fileanalyse">
+        <input type="file" name="upfile" id="upfile" required />
+        <div style="margin-top:0.75rem;">
+          <button type="submit">Upload</button>
+        </div>
+      </form>
+
+      <pre id="result">Result will appear here after upload</pre>
+    </div>
+
+    <script>
+      const form = document.getElementById('uploadForm');
+      const result = document.getElementById('result');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fileInput = document.getElementById('upfile');
+        if (!fileInput.files.length) return;
+
+        const fd = new FormData();
+        fd.append('upfile', fileInput.files[0]);
+
+        result.textContent = 'Uploading...';
+
+        try {
+          const res = await fetch('/api/fileanalyse', { method: 'POST', body: fd });
+          const json = await res.json();
+          result.textContent = JSON.stringify(json, null, 2);
+        } catch (err) {
+          result.textContent = 'Error: ' + err.message;
+        }
+      });
+    </script>
+  </body>
+</html>
